@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChainGuard AI</title>
+<style>
+:root{--bg:#07111f;--panel:#0d1b2d;--panel2:#10243a;--text:#eaf3ff;--muted:#8ea6c1;--line:#203751;--blue:#4da3ff;--green:#35d07f;--red:#ff5b68;--orange:#ffb84d}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#06101d,#0b1727);color:var(--text);font-family:Inter,system-ui,Arial,sans-serif}
+.container{max-width:1180px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:20px}
+.logo{font-size:25px;font-weight:800}.logo span{color:var(--blue)}.tag{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:330px 1fr;gap:18px}.card{background:rgba(13,27,45,.94);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 12px 35px #0004}
+h2,h3{margin:0 0 12px}h2{font-size:18px}h3{font-size:14px;color:#bcd0e7}.profile{display:flex;align-items:center;gap:12px}.avatar{width:48px;height:48px;border-radius:14px;background:#163b63;display:grid;place-items:center;font-weight:800;color:#8bc7ff}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;background:#16324f;color:#9ecbff;margin-top:4px}
+.scope{margin-top:18px}.scopebox{background:#091625;border:1px solid var(--line);border-radius:12px;padding:12px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:11px;padding:5px 8px;border-radius:8px;background:#14283e;color:#a9c9e8}
+label{display:block;color:var(--muted);font-size:12px;margin:10px 0 5px}select,input{width:100%;background:#081525;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:10px;outline:none}
+button{border:0;border-radius:9px;padding:10px 13px;font-weight:700;cursor:pointer;background:#174a78;color:white}.btnrow{display:flex;gap:8px;margin-top:12px}.secondary{background:#16283d;color:#bdd0e4}.danger{background:#6e2330}.main{display:grid;gap:18px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{background:#091625;border:1px solid var(--line);padding:13px;border-radius:12px}.kpi b{font-size:22px;display:block}.kpi span{font-size:11px;color:var(--muted)}
+.riskbar{height:10px;background:#18283a;border-radius:99px;overflow:hidden;margin-top:7px}.riskfill{height:100%;width:0;background:var(--green);transition:.35s}
+.decision{padding:14px;border-radius:12px;border:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:15px;background:#091625}.decision strong{font-size:20px}.allow{color:var(--green)}.deny{color:var(--red)}.escalate{color:var(--orange)}
+.timeline{display:grid;gap:9px}.event{border:1px solid var(--line);background:#091625;border-radius:11px;padding:12px;position:relative}.event.current{border-color:#ff6673;box-shadow:0 0 0 1px #ff667322}.eventtop{display:flex;justify-content:space-between;gap:10px}.tool{font-weight:750}.small{font-size:11px;color:var(--muted)}.event p{margin:7px 0;font-size:12px;color:#b7c8da}.status{font-size:11px;font-weight:800}.sallow{color:var(--green)}.sdeny{color:var(--red)}.sescalate{color:var(--orange)}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.wide{grid-column:1/-1}.footer{color:#7189a4;font-size:11px;margin-top:12px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}.container{padding:14px}.top{align-items:flex-start}.formgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="top">
+    <div><div class="logo">🛡️ Chain<span>Guard</span> AI</div><div class="tag">Cumulative Authorization & Privilege Escalation Detector</div></div>
+    <div class="badge">DEMO MODE</div>
+  </div>
+
+  <div class="grid">
+    <aside class="card">
+      <h2>User Authorization</h2>
+      <div class="profile"><div class="avatar">U1</div><div><b>Employee_01</b><br><span class="small">Student Assistant</span></div></div>
+      <div class="scope">
+        <h3>Original Authorization Scope</h3>
+        <div class="scopebox"><div class="chips"><span class="chip">READ</span><span class="chip">Student Records</span></div></div>
+      </div>
+      <div class="scope">
+        <h3>Current Cumulative Scope</h3>
+        <div class="scopebox"><div id="currentScope" class="chips"><span class="chip">READ</span></div></div>
+      </div>
+      <div class="scope">
+        <h3>Chain Risk</h3>
+        <b id="riskText">0 / 100</b>
+        <div class="riskbar"><div id="riskFill" class="riskfill"></div></div>
+      </div>
+      <div class="btnrow">
+        <button onclick="loadDemo()">▶ Run Demo</button>
+        <button class="secondary" onclick="resetApp()">Reset</button>
+      </div>
+      <div class="footer">Design principle: evaluate the cumulative effect of the chain, not isolated calls.</div>
+    </aside>
+
+    <main class="main">
+      <section class="card">
+        <h2>Authorization Dashboard</h2>
+        <div class="kpis">
+          <div class="kpi"><b id="steps">0</b><span>Tool Calls</span></div>
+          <div class="kpi"><b id="riskKpi">0</b><span>Risk Score</span></div>
+          <div class="kpi"><b id="scopeKpi">1</b><span>Scope Capabilities</span></div>
+          <div class="kpi"><b id="decisionKpi">—</b><span>Decision</span></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Add Tool Call</h2>
+        <div class="formgrid">
+          <div><label>Tool</label><select id="tool">
+            <option>Search Student DB</option><option>Export Records</option><option>Share Export</option>
+            <option>File Reader</option><option>Permission Manager</option><option>External Upload</option>
+          </select></div>
+          <div><label>Action</label><select id="action">
+            <option>READ</option><option>EXPORT</option><option>SHARE</option><option>MODIFY</option><option>GRANT</option><option>UPLOAD</option>
+          </select></div>
+          <div class="wide"><label>Target / Effect</label><input id="effect" value="Student records"></div>
+        </div>
+        <div class="btnrow"><button onclick="addCall()">Evaluate & Add Call</button><button class="secondary" onclick="loadDemo()">Load Challenge Scenario</button></div>
+      </section>
+
+      <section class="card">
+        <div class="decision">
+          <div><div class="small">FINAL AUTHORIZATION DECISION</div><strong id="decision" class="allow">—</strong></div>
+          <div id="reason" class="small">No tool calls evaluated yet.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Action Chain Timeline</h2>
+        <div id="timeline" class="timeline">
+          <div class="event"><div class="small">Waiting for tool calls…</div></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+const original = new Set(["READ"]);
+let state={calls:[],scope:new Set(["READ"]),risk:0,decision:"—"};
+
+const effects = {
+  "Search Student DB": {cap:"READ",risk:0,desc:"Reads records within the original scope."},
+  "Export Records": {cap:"EXPORT",risk:25,desc:"Creates a portable copy of the data."},
+  "Share Export": {cap:"EXTERNAL_SHARE",risk:45,desc:"Moves the exported data outside the original boundary."},
+  "File Reader": {cap:"READ_FILE",risk:10,desc:"Reads a file."},
+  "Permission Manager": {cap:"GRANT",risk:40,desc:"Changes another identity's permissions."},
+  "External Upload": {cap:"EXTERNAL_UPLOAD",risk:45,desc:"Transfers data to an external destination."}
+};
+
+function evaluate(tool,action,effect){
+  const e=effects[tool]||{cap:action,risk:20,desc:"New capability introduced."};
+  const newScope=new Set(state.scope); newScope.add(e.cap);
+  let risk=state.risk+e.risk;
+  let violation=false, reason="Within current authorization scope.";
+  if(newScope.has("EXTERNAL_SHARE")||newScope.has("EXTERNAL_UPLOAD")){risk+=15;violation=true;reason="Cumulative chain crosses the original data boundary."}
+  if(newScope.has("GRANT")){risk+=15;violation=true;reason="Cumulative chain introduces privilege-granting capability."}
+  if(newScope.has("EXPORT") && newScope.size>=3){risk+=5;reason="Data has become portable and chain complexity increased."}
+  risk=Math.min(100,risk);
+  let decision = violation || risk>=75 ? "DENY" : risk>=45 ? "ESCALATE" : "ALLOW";
+  return {cap:e.cap,risk,decision,reason,desc:e.desc,scope:newScope};
+}
+function addCall(){
+  const tool=document.getElementById("tool").value, action=document.getElementById("action").value, effect=document.getElementById("effect").value;
+  const r=evaluate(tool,action,effect);
+  state.scope=r.scope; state.risk=r.risk; state.decision=r.decision;
+  state.calls.push({tool,action,effect,...r});
+  render();
+}
+function render(){
+  document.getElementById("steps").textContent=state.calls.length;
+  document.getElementById("riskKpi").textContent=state.risk;
+  document.getElementById("scopeKpi").textContent=state.scope.size;
+  document.getElementById("riskText").textContent=state.risk+" / 100";
+  document.getElementById("riskFill").style.width=state.risk+"%";
+  document.getElementById("decisionKpi").textContent=state.decision;
+  const d=document.getElementById("decision"); d.textContent=state.decision;
+  d.className=state.decision==="ALLOW"?"allow":state.decision==="DENY"?"deny":"escalate";
+  document.getElementById("reason").textContent=state.calls.length?state.calls[state.calls.length-1].reason:"No tool calls evaluated yet.";
+  document.getElementById("currentScope").innerHTML=[...state.scope].map(x=>`<span class="chip">${x}</span>`).join("");
+  const t=document.getElementById("timeline");
+  t.innerHTML=state.calls.map((c,i)=>`
+    <div class="event ${i===state.calls.length-1?'current':''}">
+      <div class="eventtop"><div><span class="tool">#${i+1} ${c.tool}</span><div class="small">${c.action} → ${c.effect}</div></div>
+      <span class="status ${c.decision==='ALLOW'?'sallow':c.decision==='DENY'?'sdeny':'sescalate'}">${c.decision}</span></div>
+      <p>${c.desc}</p>
+      <div class="small">Cumulative scope: ${[...c.scope].join(" + ")} · Risk: ${c.risk}/100</div>
+    </div>`).join("");
+}
+function resetApp(){state={calls:[],scope:new Set(["READ"]),risk:0,decision:"—"};render();}
+function loadDemo(){
+  resetApp();
+  const demo=[
+    ["Search Student DB","READ","Student records"],
+    ["Export Records","EXPORT","Student records → local export"],
+    ["Share Export","SHARE","External account"]
+  ];
+  demo.forEach((x,i)=>{
+    const r=evaluate(...x);state.scope=r.scope;state.risk=r.risk;state.decision=r.decision;
+    state.calls.push({tool:x[0],action:x[1],effect:x[2],...r});
+  });
+  render();
+}
+render();
+</script>
+</body>
+</html>
