@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Authorization | AI Security</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">🛡️</div>
+            <div>
+                <h2>AuthGuard</h2>
+                <span>AI Security Layer</span>
+            </div>
+        </div>
+
+        <nav>
+            <a class="active">
+                <span>▦</span> Dashboard
+            </a>
+
+            <a>
+                <span>⚡</span> Agent Requests
+            </a>
+
+            <a>
+                <span>🔐</span> Policies
+            </a>
+
+            <a>
+                <span>📊</span> Analytics
+            </a>
+
+            <a>
+                <span>📋</span> Audit Logs
+            </a>
+        </nav>
+
+        <div class="system-status">
+            <div class="status-dot"></div>
+            <div>
+                <strong>System Protected</strong>
+                <small>Runtime mediation active</small>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+
+            <div>
+                <h1>Authorization Dashboard</h1>
+                <p>Real-time AI agent tool-call security</p>
+            </div>
+
+            <div class="top-actions">
+                <span class="live">
+                    <span></span> LIVE
+                </span>
+
+                <div class="profile">
+                    👤
+                    <span>Security Admin</span>
+                </div>
+            </div>
+
+        </header>
+
+
+        <!-- STATISTICS -->
+        <section class="stats">
+
+            <div class="stat-card">
+                <div class="stat-icon blue">⚡</div>
+                <div>
+                    <span>Total Requests</span>
+                    <h2 id="totalRequests">24</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">✓</div>
+                <div>
+                    <span>Allowed</span>
+                    <h2 id="allowedCount">16</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon red">✕</div>
+                <div>
+                    <span>Denied</span>
+                    <h2 id="deniedCount">5</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon yellow">!</div>
+                <div>
+                    <span>Escalated</span>
+                    <h2 id="escalatedCount">3</h2>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- CONTENT GRID -->
+        <section class="content-grid">
+
+            <!-- REQUEST PANEL -->
+            <div class="panel request-panel">
+
+                <div class="panel-header">
+                    <div>
+                        <h2>New Tool Request</h2>
+                        <p>Simulate an AI agent action</p>
+                    </div>
+
+                    <span class="security-badge">
+                        🛡️ Protected
+                    </span>
+                </div>
+
+
+                <form id="requestForm">
+
+                    <label>Agent Request</label>
+
+                    <textarea
+                        id="request"
+                        placeholder="Example: Read the user's project report..."
+                        required></textarea>
+
+
+                    <div class="form-row">
+
+                        <div class="field">
+                            <label>Tool Category</label>
+
+                            <select id="tool">
+                                <option value="File">📁 File Operation</option>
+                                <option value="Command">💻 Command Execution</option>
+                                <option value="Database">🗄️ Database Access</option>
+                                <option value="API">🌐 External API</option>
+                                <option value="Messaging">📧 Messaging</option>
+                            </select>
+                        </div>
+
+
+                        <div class="field">
+                            <label>Risk Level</label>
+
+                            <select id="risk">
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                                <option value="Critical">Critical</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>Instruction Source</label>
+
+                        <select id="source">
+                            <option value="User">👤 User Instruction</option>
+                            <option value="System">⚙️ System Policy</option>
+                            <option value="Document">📄 Document</option>
+                            <option value="Website">🌐 Website</option>
+                            <option value="Email">📧 Email</option>
+                            <option value="Tool">🔧 Tool Output</option>
+                        </select>
+
+                    </div>
+
+
+                    <button type="submit" class="authorize-btn">
+                        🔍 Evaluate Authorization
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- DECISION PANEL -->
+            <div class="panel decision-panel">
+
+                <div class="panel-header">
+                    <div>
+                        <h2>Authorization Decision</h2>
+                        <p>Latest security evaluation</p>
+                    </div>
+                </div>
+
+
+                <div id="decisionBox" class="decision neutral">
+
+                    <div class="decision-icon">
+                        🛡️
+                    </div>
+
+                    <h2>WAITING</h2>
+
+                    <p>
+                        Submit an agent request to evaluate
+                        authorization.
+                    </p>
+
+                </div>
+
+
+                <div class="decision-details">
+
+                    <div>
+                        <span>Tool</span>
+                        <strong id="resultTool">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Risk</span>
+                        <strong id="resultRisk">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Source</span>
+                        <strong id="resultSource">—</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SECURITY FLOW -->
+        <section class="panel flow-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h2>Runtime Authorization Flow</h2>
+                    <p>Every tool call passes through the security layer</p>
+                </div>
+
+            </div>
+
+
+            <div class="flow">
+
+                <div class="flow-step">
+                    <div class="flow-icon">🤖</div>
+                    <strong>AI Agent</strong>
+                    <small>Requests action</small>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="flow-step security">
+                    <div class="flow-icon">🛡️</div>
+                    <strong>AuthGuard</strong>
+                    <small>Evaluate context</small>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="flow-decisions">
+
+                    <div class="mini allow">
+                        ✓ ALLOW
+                    </div>
+
+                    <div class="mini deny">
+                        ✕ DENY
+                    </div>
+
+                    <div class="mini escalate">
+                        ! ESCALATE
+                    </div>
+
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="flow-step">
+                    <div class="flow-icon">🔧</div>
+                    <strong>Protected Tool</strong>
+                    <small>Execute if permitted</small>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- LOGS -->
+        <section class="panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h2>Recent Authorization Events</h2>
+                    <p>Live security activity</p>
+                </div>
+
+                <button class="clear-btn" onclick="clearLogs()">
+                    Clear
+                </button>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Agent Request</th>
+                            <th>Tool</th>
+                            <th>Risk</th>
+                            <th>Source</th>
+                            <th>Decision</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="logs">
+
+                        <tr>
+                            <td>11:10:21</td>
+                            <td>Read project report</td>
+                            <td>File</td>
+                            <td><span class="risk low">Low</span></td>
+                            <td>User</td>
+                            <td><span class="decision-tag allow">ALLOW</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>11:09:45</td>
+                            <td>Upload confidential file</td>
+                            <td>API</td>
+                            <td><span class="risk high">High</span></td>
+                            <td>Document</td>
+                            <td><span class="decision-tag deny">DENY</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>11:08:31</td>
+                            <td>Delete database record</td>
+                            <td>Database</td>
+                            <td><span class="risk critical">Critical</span></td>
+                            <td>Agent</td>
+                            <td><span class="decision-tag escalate">ESCALATE</span></td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <footer>
+            AuthGuard • Adaptive Authorization for AI Agents • Hackathon Prototype
+        </footer>
+
+    </main>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
